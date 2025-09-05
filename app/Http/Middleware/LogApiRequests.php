@@ -36,6 +36,7 @@ class LogApiRequests
                 $requestData[$field] = '******';
             }
         }
+        
          
           // Log incoming request
         Log::channel('api')->info('Incoming API Request', [
