@@ -51,6 +51,7 @@ class LogApiRequests
 
         // Optionally, mask sensitive fields in response too
         $responseContent = $response->getContent();
+        $responseContent2 = $response->getContent();
         // Simple masking example (if JSON)
         if ($this->isJson($responseContent)) {
             $responseData = json_decode($responseContent, true);
@@ -65,7 +66,8 @@ class LogApiRequests
         // Log outgoing response
         Log::channel('api')->info('Outgoing API Response', [
             'status' => $response->getStatusCode(),
-            'body'   => $responseContent,
+            'body'   => json_decode($responseContent2)
+            
         ]);
 
         return $response;

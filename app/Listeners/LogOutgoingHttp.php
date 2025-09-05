@@ -36,11 +36,13 @@ class LogOutgoingHttp
             foreach ($this->sensitive as $field) {
                 if (isset($data[$field])) $data[$field] = '******';
             }
-            $body = json_encode($data);
+            //$body = json_encode($data);
+            $body = $data;
         }
 
         // Mask sensitive fields in response
         $responseBody = $response->body();
+        $responseBody2 = $response->body();
         if ($this->isJson($responseBody)) {
             $data = json_decode($responseBody, true);
             foreach ($this->sensitive as $field) {
@@ -56,7 +58,7 @@ class LogOutgoingHttp
             'headers'  => $request->headers(),
             'body'     => $body,
             'status'   => $response->status(),
-            'response' => $responseBody,
+            'response' => json_decode($responseBody2),
         ]);
     }
 
