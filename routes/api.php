@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\SelcomPaymentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\SelecomWebhookController;
 
@@ -15,5 +16,6 @@ Route::fallback(function () {
 Route::prefix('v1/payment')->group(function () {
     Route::post('/validation', [SelecomWebhookController::class, 'paymentValidation']);
     Route::post('/notification', [SelecomWebhookController::class, 'paymentNotification']);
+    Route::post('/checkout/order', [SelcomPaymentController::class, 'createOrder']);
 });
 

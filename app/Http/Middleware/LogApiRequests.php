@@ -6,6 +6,8 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Http;
+ 
 
 class LogApiRequests
 {
@@ -75,5 +77,7 @@ class LogApiRequests
         json_decode($string);
         return json_last_error() === JSON_ERROR_NONE;
     }
+
+    
 
 }

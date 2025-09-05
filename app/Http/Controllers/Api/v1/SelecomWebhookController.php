@@ -100,7 +100,7 @@ class SelecomWebhookController extends Controller
             //TODO handle latter
         $validated = Validator::make($request->all(),[
         'operator'    => 'required|string|max:50',
-        'transid'     => 'required|string|exists:payments,reference',
+        'transid'     => 'required|string|exists:payments,transid',
         'reference'   => 'required|string|exists:payments,reference',
         'utilityref'  => 'required|string|exists:student,refno',
         'amount'      => 'required|numeric|min:1',
