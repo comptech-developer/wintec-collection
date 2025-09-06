@@ -59,7 +59,7 @@ class SelcomService {
             $headers = $this->generateHeaders($payload);
 
             $response = Http::withHeaders($headers)
-                ->post("{$this->apiUrl}/heckout/wallet-payment", $payload);
+                ->post("{$this->apiUrl}/checkout/wallet-payment", $payload);
 
             return [
                 'success'  => $response->successful(),
