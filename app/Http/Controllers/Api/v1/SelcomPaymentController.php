@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Service\SelcomService;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class SelcomPaymentController extends Controller
@@ -125,7 +126,7 @@ public function createOrder(Request $request, SelcomService $selcom)
 
     public function savepayment($request,$response)
     {
-
+        
         $data = [
             'operator'          => 'KIDIMU',
             'transid'           => data_get($request,'transid'),
@@ -152,7 +153,7 @@ public function createOrder(Request $request, SelcomService $selcom)
             'payment_token'     => data_get($response,'response.data.payment_token'),
             'payment_gateway_url'=> data_get($response,'response.data.payment_gateway_url'),
             'channel'           => null,
-            'request'           => $request,
+            'request'           => json_encode($request, JSON_PRETTY_PRINT),
             'response'          => is_array($response) || is_object($response) ? json_encode($response) : $response,
         ];
         Payment::create($data);
