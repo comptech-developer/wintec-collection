@@ -65,7 +65,7 @@ public function createOrder(Request $request, SelcomService $selcom)
             $validator = Validator::make($request->all(), [
                 'order_id'         => 'required|string|max:100',
                 'msisdn'      =>      'required|string|max:20',
-                'amount'           => 'required|numeric|min:200',
+               // 'amount'           => 'required|numeric|min:200',
             ]);
 
             if ($validator->fails()) {
