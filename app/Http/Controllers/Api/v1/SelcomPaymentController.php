@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Service\SelcomService;
@@ -17,7 +18,7 @@ public function createOrder(Request $request, SelcomService $selcom)
         try {
             //  Validate request
             $validator = Validator::make($request->all(), [
-                'order_id'         => 'required|string|max:100',
+                'order_id'         => 'required|string|exists:student,refno',
                 'buyer_email'      => 'required|email',
                 'buyer_name'       => 'required|string|max:100',
                 'buyer_phone'      => 'required|string|max:20',
@@ -41,9 +42,16 @@ public function createOrder(Request $request, SelcomService $selcom)
 
             // Payload
             $payload = $validator->validated();
-
+            $payload['webhook'] = base64_encode(config('app.url').'/api/v1/payment/callback');
             //Call service
             $response = $selcom->createOrder($payload);
+
+            //log the request on db
+            //generate transid and ref
+            $payload['transid'] = $this->generateTransId();
+            $payload['reference'] = $this->generateReference();
+
+            $this->savepayment($payload,$response);
 
             return response()->json($response, $response['success'] ? 200 : 400);
 
@@ -77,7 +85,7 @@ public function createOrder(Request $request, SelcomService $selcom)
 
             // Payload
             $payload = $validator->validated();
-            $payload['transid'] = Str::orderedUuid();
+            $payload['transid'] = $this->generateTransId();
 
             //Call service
             $response = $selcom->confirmOrder($payload);
@@ -95,5 +103,57 @@ public function createOrder(Request $request, SelcomService $selcom)
 
     }
 
+    private function generateTransId()
+    {
+   
+        $transid = 'TXN' . str_replace('-', '', (string) Str::ulid());
+        return $transid;
+
+    }
+
+    private function generateReference()
+    {
+       $reference = 'REF' . now()->format('YmdHis') . Str::upper(Str::random(6));
+       return $reference;
+        
+    }
+
+
+    public function savepayment($request,$response)
+    {
+
+        $data = [
+            'operator'          => 'KIDIMU',
+            'transid'           => data_get($request,'transid'),
+            'reference'         => data_get($request,'reference'),
+            'utilityref'        => data_get($request,'order_id'),
+            'amount'            => data_get($request,'amount'),
+            'msisdn'            => data_get($request,'buyer_phone'),
+            'vendor'            => env('SELCOM_VENDORID'),
+            'phonenumber'       => data_get($request,'buyer_phone'),
+            'user'              => env('ACCESS_TOKEN'),
+            'email'             => data_get($request,'buyer_email','winfrid31@gmail.com'),
+            'name'              => data_get($request,'buyer_name'),
+            'currency'          =>data_get($request,'currency'),
+            'webhookurl'        =>data_get($request,'webhook'),
+            'buyer_remark'      => data_get($request,'payer_remarks'),
+            'merchant_remark'   => data_get($request,'merchant_remarks'),
+            'no_of_items'       => data_get($request,'no_of_items'),
+            'resultcode'        => data_get($response,'response.stdClass.resultcode'),
+            'result'            => data_get($response,'response.stdClass.result'),
+            'message'           => data_get($response,'response.stdClass.message'),
+            'response_success'  => data_get($response,'success'),
+            'response_status'   => data_get($response,'status'),
+            'selcom_reference'  =>data_get($response,'response.stdClass.message'),
+            'payment_token'     => data_get($response,'response.data.payment_token'),
+            'payment_gateway_url'=> data_get($response,'response.data.payment_gateway_url'),
+            'channel'           => null,
+            'request'           => json_encode($request),
+            'response'          => $response
+        ];
+        Payment::create($data);
+        return true;
+        
+    }
 
 }

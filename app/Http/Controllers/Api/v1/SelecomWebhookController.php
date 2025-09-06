@@ -162,6 +162,71 @@ class SelecomWebhookController extends Controller
     }
 
 
+    public function selecomcallback(Request $request)
+    {
+      
+       try {
+            // Validation rules
+            $validator = Validator::make($request->all(), [
+                'result'          => 'required|string',
+                'resultcode'      => 'required|string',
+                'order_id'        => 'required|string',
+                'transid'         => 'required|string',
+                'reference'       => 'required|string',
+                'channel'         => 'required|string',
+                'amount'          => 'required|numeric|min:1',
+                'phone'           => 'required|string',
+                'payment_status'  => 'required|string|in:COMPLETED,CANCELLED,PENDING,USERCANCELED',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'errors'  => $validator->errors(),
+                ], 422);
+            }
+
+            $data = $validator->validated();
+
+            // Find payment by transid
+            $payment = Payment::where('transid', $data['transid'])->first();
+
+            if (!$payment) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Payment not found for this transaction ID',
+                ], 404);
+            }
+
+            // Map external status to internal
+            $statusMap = [
+                'COMPLETED'      => 'paid',
+                'PENDING'        => 'pending',
+                'CANCELLED'      => 'failed',
+                'USERCANCELED'   => 'failed',
+            ];
+
+            $payment->status = $statusMap[$data['payment_status']] ?? 'pending';
+            $payment->amount = $data['amount']; // update amount if needed
+            $payment->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment updated successfully',
+                'data'    => $payment,
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong while handling callback',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+        
+    }
+
+
      private function rules($request): array
     {
         $validated = $request->validate([
