@@ -31,6 +31,8 @@ public function createOrder(Request $request, SelcomService $selcom)
                 'order_items'      => 'nullable',
                 'no_of_items'      => 'required|integer|min:1',
                 'webhook'          => 'nullable|url', // optional
+            ],[
+                'order_id.exists' => 'The provided reference does not exist on our records.',
             ]);
 
             if ($validator->fails()) {
@@ -48,9 +50,11 @@ public function createOrder(Request $request, SelcomService $selcom)
 
             //log the request on db
             //generate transid and ref
-            $payload['transid'] = $this->generateTransId();
-            $payload['reference'] = $this->generateReference();
-
+            $transid = $this->generateTransId();
+            $reference = $this->generateReference();
+            $payload['transid'] = $transid;
+            $payload['reference'] = $reference;
+               
             $this->savepayment($payload,$response);
 
             return response()->json($response, $response['success'] ? 200 : 400);
@@ -148,8 +152,8 @@ public function createOrder(Request $request, SelcomService $selcom)
             'payment_token'     => data_get($response,'response.data.payment_token'),
             'payment_gateway_url'=> data_get($response,'response.data.payment_gateway_url'),
             'channel'           => null,
-            'request'           => json_encode($request),
-            'response'          => $response
+            'request'           => $request,
+            'response'          => is_array($response) || is_object($response) ? json_encode($response) : $response,
         ];
         Payment::create($data);
         return true;
