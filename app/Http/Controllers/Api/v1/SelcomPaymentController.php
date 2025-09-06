@@ -19,7 +19,7 @@ public function createOrder(Request $request, SelcomService $selcom)
         try {
             //  Validate request
             $validator = Validator::make($request->all(), [
-                'order_id'         => 'required|string|exists:student,refno',
+                'order_id'         => 'required|string',
                 'buyer_email'      => 'required|email',
                 'buyer_name'       => 'required|string|max:100',
                 'buyer_phone'      => 'required|string|max:20',
@@ -59,7 +59,8 @@ public function createOrder(Request $request, SelcomService $selcom)
             $this->savepayment($payload,$response);
             $response['billref'] = [
                 'transid'  => $transid,
-                'reference' => $reference
+                'reference' => $reference,
+                'order_id' => $request->order_id
             ];
             return response()->json($response,$response['success'] ? 200 : 400);
 
@@ -98,7 +99,7 @@ public function createOrder(Request $request, SelcomService $selcom)
             //Call service
             $response = $selcom->confirmOrder($payload);
 
-            return response()->json($response,$response,$response['success'] ? 200 : 400);
+            return response()->json($response,$response['success'] ? 200 : 400);
 
         } catch (Exception $e) {
             //  Catch any unexpected error
@@ -129,12 +130,12 @@ public function createOrder(Request $request, SelcomService $selcom)
 
     public function savepayment($request,$response)
     {
-        
+        $originalRefno = explode('-', data_get($request,'order_id'))[0];
         $data = [
             'operator'          => 'KIDIMU',
             'transid'           => data_get($request,'transid'),
             'reference'         => data_get($request,'reference'),
-            'utilityref'        => data_get($request,'order_id'),
+            'utilityref'        => $originalRefno,
             'amount'            => data_get($request,'amount'),
             'msisdn'            => data_get($request,'buyer_phone'),
             'vendor'            => env('SELCOM_VENDORID'),
