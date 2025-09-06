@@ -57,8 +57,11 @@ public function createOrder(Request $request, SelcomService $selcom)
             $payload['reference'] = $reference;
                
             $this->savepayment($payload,$response);
-
-            return response()->json($response, $response['success'] ? 200 : 400);
+            $response['billref'] = [
+                'transid'  => $transid,
+                'reference' => $reference
+            ];
+            return response()->json($response,$response['success'] ? 200 : 400);
 
         } catch (Exception $e) {
             //  Catch any unexpected error
@@ -95,7 +98,7 @@ public function createOrder(Request $request, SelcomService $selcom)
             //Call service
             $response = $selcom->confirmOrder($payload);
 
-            return response()->json($response, $response['success'] ? 200 : 400);
+            return response()->json($response,$response,$response['success'] ? 200 : 400);
 
         } catch (Exception $e) {
             //  Catch any unexpected error
