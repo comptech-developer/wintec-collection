@@ -7,6 +7,7 @@ use App\Models\Payment;
 use App\Models\Waumin;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
@@ -164,7 +165,7 @@ class SelecomWebhookController extends Controller
 
     public function selecomcallback(Request $request)
     {
-      
+      Log::info('callback is coming ...');
        try {
             // Validation rules
             $validator = Validator::make($request->all(), [
