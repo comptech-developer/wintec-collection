@@ -206,8 +206,13 @@ class SelecomWebhookController extends Controller
                 'USERCANCELED'   => 'failed',
             ];
 
-            $payment->status = $statusMap[$data['payment_status']] ?? 'pending';
-            $payment->amount = $data['amount']; // update amount if needed
+            //$payment->status = $statusMap[$data['payment_status']] ?? 'pending';
+            //$payment->amount = $data['amount']; // update amount if needed
+            $payment->payment_status = $data['payment_status'];
+            $payment->selcom_reference = $data['reference'];
+            $payment->channel   = $data['channel'];
+            $payment->result = $data['result'];
+            $payment->resultcode  = $data['resultcode'];
             $payment->save();
 
             return response()->json([

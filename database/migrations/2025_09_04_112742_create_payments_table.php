@@ -36,6 +36,7 @@ return new class extends Migration
             $table->integer('response_status')->nullable();
             $table->string('payment_token')->nullable();
             $table->text('payment_gateway_url')->nullable();
+            $table->text('payment_status')->nullable();
             $table->string('selcom_reference')->nullable();
             $table->text('channel')->nullable();
             $table->text('request')->nullable();
