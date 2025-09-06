@@ -17,5 +17,6 @@ Route::prefix('v1/payment')->group(function () {
     Route::post('/validation', [SelecomWebhookController::class, 'paymentValidation']);
     Route::post('/notification', [SelecomWebhookController::class, 'paymentNotification']);
     Route::post('/checkout/order', [SelcomPaymentController::class, 'createOrder']);
+    Route::post('/checkout/walletpush', [SelcomPaymentController::class, 'walletPush']);
 });
 

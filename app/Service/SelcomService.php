@@ -53,6 +53,21 @@ class SelcomService {
             ];
     }
 
+        public function confirmOrder(array $payload): array
+            {
+            
+            $headers = $this->generateHeaders($payload);
+
+            $response = Http::withHeaders($headers)
+                ->post("{$this->apiUrl}/heckout/wallet-payment", $payload);
+
+            return [
+                'success'  => $response->successful(),
+                'status'   => $response->status(),
+                'response' => $response->json(),
+            ];
+    }
+
     /**
      * Generate headers required by Selcom API
      */
@@ -81,4 +96,7 @@ class SelcomService {
             'Signed-Fields' => $signedFields,
         ];
     }
+
+   
+
 }
