@@ -134,6 +134,7 @@ public function createOrder(Request $request, SelcomService $selcom)
         $data = [
             'operator'          => 'KIDIMU',
             'transid'           => data_get($request,'transid'),
+            'order_id'          => data_get($request,'order_id'),
             'reference'         => data_get($request,'reference'),
             'utilityref'        => $originalRefno,
             'amount'            => data_get($request,'amount'),
