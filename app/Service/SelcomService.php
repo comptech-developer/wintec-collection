@@ -72,7 +72,7 @@ class SelcomService {
      {
             $headers = $this->generateHeaders($payload);
             $response = Http::withHeaders($headers)
-                ->get("{$this->apiUrl}/checkout/create-order-minimal", $payload);
+                ->get("{$this->apiUrl}/checkout/list-orders", $payload);
 
             return [
                 'success'  => $response->successful(),
