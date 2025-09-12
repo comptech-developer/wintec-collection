@@ -16,7 +16,7 @@ class CheckPaymentStatusJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(private SelcomService $selcomService)
+    public function __construct()
     {
         //
         
@@ -37,9 +37,9 @@ class CheckPaymentStatusJob implements ShouldQueue
 
     foreach ($pendingPayments as $payment) {
         try {
-           
+            $selcomService  =   new SelcomService();
             $payload = ['order_id'=>$payment->order_id];
-            $response = $this->selcomService->orderStatus($payload);
+            $response = $selcomService->orderStatus($payload);
             if (data_get($response,'success') ==200) {
                 
 
