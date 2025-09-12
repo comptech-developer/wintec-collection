@@ -198,7 +198,9 @@ public function createOrder(Request $request, SelcomService $selcom)
             ]);
             $payload = $validator->validate();
             $response = $selcom->orderStatus($payload);
+            
             return response()->json($response,$response['success'] ? 200 : 400);
+
          } catch (\Throwable $th) {
             //throw $th;
             report($th);
