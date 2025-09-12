@@ -166,4 +166,27 @@ public function createOrder(Request $request, SelcomService $selcom)
         
     }
 
+    public function Orderlist(Request $request,SelcomService $selcom)
+    {
+
+         try {
+            $validator = Validator::make($request->all(), [
+                'fromdate'         => 'required|date',
+                'todate'      =>      'required|date',
+            ]);
+            $payload = $validator->validate();
+            $response = $selcom->orderStatus($payload);
+            return response()->json($response,$response['success'] ? 200 : 400);
+         } catch (\Throwable $th) {
+            //throw $th;
+            report($th);
+            return response()->json([
+                'success' => false,
+                'message' => 'Order payment failed.',
+                'error'   => $th->getMessage(),
+            ], 500);
+         }
+
+    }
+
 }

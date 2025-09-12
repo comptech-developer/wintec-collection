@@ -209,7 +209,7 @@ class SelecomWebhookController extends Controller
 
             //$payment->status = $statusMap[$data['payment_status']] ?? 'pending';
             //$payment->amount = $data['amount']; // update amount if needed
-            $payment->payment_status = $data['payment_status'];
+            $payment->payment_status = $statusMap[$data['payment_status']] ?? 'pending';
             $payment->selcom_reference = $data['reference'];
             $payment->channel   = $data['channel'];
             $payment->result = $data['result'];
@@ -225,8 +225,8 @@ class SelecomWebhookController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Something went wrong while handling callback',
-                'error'   => $e->getMessage(),
+                'message' => 'Something went wrong',
+                'error'   => 'Un expected error occured while while handling callback',
             ], 500);
         }
         

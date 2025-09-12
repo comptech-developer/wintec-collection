@@ -68,6 +68,20 @@ class SelcomService {
             ];
     }
 
+     public function orderStatus(array $payload): array
+     {
+            $headers = $this->generateHeaders($payload);
+            $response = Http::withHeaders($headers)
+                ->get("{$this->apiUrl}/checkout/create-order-minimal", $payload);
+
+            return [
+                'success'  => $response->successful(),
+                'status'   => $response->status(),
+                'response' => $response->json(),
+            ];
+
+     }
+
     /**
      * Generate headers required by Selcom API
      */

@@ -19,6 +19,6 @@ Route::prefix('v1/payment')->group(function () {
     Route::post('/callback', [SelecomWebhookController::class, 'selecomcallback']);
     Route::post('/checkout/order', [SelcomPaymentController::class, 'createOrder']);
     Route::post('/checkout/walletpush', [SelcomPaymentController::class, 'walletPush']);
-
+    Route::post('/checkout/orderstatus', [SelcomPaymentController::class, 'Orderlist']);
 });
 
