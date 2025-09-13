@@ -30,6 +30,7 @@ class CheckPaymentStatusJob implements ShouldQueue
         //
         $pendingPayments = Payment::where(function ($q) {
             $q->whereNull('payment_status')
+              ->orWhere('payment_status', '')
               ->orWhere('payment_status', 'pending');
         })
         ->whereNull('last_checked_at')
