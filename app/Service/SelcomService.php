@@ -13,7 +13,7 @@ class SelcomService {
     public function __construct()
     {
 
-    info('Selcom API key: '.config('services.selcom_service.selcom_api_key'));
+    //info('Selcom API key: '.config('services.selcom_service.selcom_api_key'));
     $this->apiKey    = config('services.selcom_service.selcom_api_key') ?? env('SELCOM_API_KEY');
     $this->apiSecret = config('services.selcom_service.selcom_secret_key') ?? env('SELCOM_API_SECRET');
     $this->apiUrl    = config('services.selcom_service.selcom_url') ?? env('SELCOM_SERVICE');
