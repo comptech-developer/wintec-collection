@@ -45,21 +45,13 @@ class CheckPaymentStatusJob implements ShouldQueue
                 
                   
                     $payment->update([
-                        'payment_status' => strtolower(data_get($response,'response.data.payment_status')), // e.g. completed
-                        'channel'        => strtolower(data_get($response,'response.data.channel')),
-                        'selcom_reference'  =>strtolower(data_get($response,'response.data.reference')),
-                        'selcom_transid' =>  strtolower(data_get($response,'response.data.transid')),
+                        'payment_status' => strtolower(data_get($response,'response.data.0.payment_status')), // e.g. completed
+                        'channel'        => strtolower(data_get($response,'response.data.0.channel')),
+                        'selcom_reference'  =>strtolower(data_get($response,'response.data.0.reference')),
+                        'selcom_transid' =>  strtolower(data_get($response,'response.data.0.transid')),
                         'last_checked_at'=> now(),
                     ]);
  
-                    Log::info([
-                        'payment_status' => strtolower(data_get($response,'response.data.payment_status')), 
-                        'channel'        => strtolower(data_get($response,'response.data.channel')),
-                        'selcom_reference'  =>strtolower(data_get($response,'response.data.reference')),
-                        'selcom_transid' =>  strtolower(data_get($response,'response.data.transid')),
-                        'last_checked_at'=> now(),
-                     ]);
-
                
             } else {
                 Log::error("Payment API failed for order {$payment->order_id}", [
