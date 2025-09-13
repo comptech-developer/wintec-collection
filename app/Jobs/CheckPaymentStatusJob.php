@@ -34,7 +34,7 @@ class CheckPaymentStatusJob implements ShouldQueue
         })
         ->whereNull('last_checked_at')
         ->get();
-
+      Log::info(count($pendingPayments));
     foreach ($pendingPayments as $payment) {
         try {
             $selcomService  =   new SelcomService();
