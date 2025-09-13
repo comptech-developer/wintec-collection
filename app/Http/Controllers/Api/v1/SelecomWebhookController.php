@@ -113,7 +113,7 @@ class SelecomWebhookController extends Controller
 
         ],
         );
-          
+         
            //return validatoin error
             if ($validated->fails()) {
             return response()->json([
@@ -128,6 +128,12 @@ class SelecomWebhookController extends Controller
         }
         //fetch record and validate amount if required 
           $data = Waumin::where('refno',$request->utilityref)->first();
+          //update 
+           $update = Payment::where(['transid'=>$request->transid,
+            'utilityref'=> $validated->validate()['utilityref'],
+            'reference'=>$validated->validate()['reference']
+            ])->update(['payment_status'=>'completed']);
+            Log::info($update);
             return response()->json(
                [
             "reference"  => $request->reference,
