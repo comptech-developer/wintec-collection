@@ -132,7 +132,7 @@ class SelecomWebhookController extends Controller
            $update = Payment::where(['transid'=>$request->transid,
             'utilityref'=> $validated->validate()['utilityref'],
             'reference'=>$validated->validate()['reference']
-            ])->update(['payment_status'=>'completed']);
+            ])->update(['payment_status'=>'completed','last_checked_at'=> now()]);
             Log::info($update);
             return response()->json(
                [
