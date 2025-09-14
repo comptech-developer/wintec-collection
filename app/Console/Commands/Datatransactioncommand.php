@@ -28,16 +28,31 @@ class Datatransactioncommand extends Command
     public function handle()
     {
         //
-        try {
-            $waumin = Waumin::all();
-            foreach ($waumin as $key => $value) {
-            $branch = DB::table('jumuiya')->select('branch_id')->where('id',$value->jumuiya_id)->first();
-            $value->update(['branch_id'=>$branch->branch_id]);
-            $this->info('command executed successfully!');
+       try {
+        $wauminList = Waumin::all();
+
+        foreach ($wauminList as $waumin) {
+            // Get branch_id from jumuiya
+            $branch = DB::table('jumuiya')
+                ->select('branch_id')
+                ->where('id', $waumin->jumuiya_id)
+                ->first();
+
+            // Skip if branch not found
+            if (!$branch) {
+                $this->warn("Skipping Waumin ID {$waumin->id}: jumuiya not found");
+                continue;
             }
-        } catch (\Throwable $th) {
-            //throw $th;
-              $this->error('command executed failed!' . $th->getMessage());
+
+            // Update branch_id without touching updated_at
+            $waumin->timestamps = false;
+            $waumin->branch_id = $branch->branch_id;
+            $waumin->save();
         }
+
+        $this->info('Command executed successfully for all rows!');
+    } catch (\Throwable $th) {
+        $this->error('Command execution failed: ' . $th->getMessage());
+    }
     }
 }
