@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendPaymentSMSNotification;
 use App\Models\Payment;
 use App\Models\Waumin;
 use Illuminate\Http\JsonResponse;
@@ -134,6 +135,9 @@ class SelecomWebhookController extends Controller
             'reference'=>$validated->validate()['reference']
             ])->update(['payment_status'=>'completed','last_checked_at'=> now()]);
             Log::info($update);
+
+            SendPaymentSMSNotification::dispatch($data->sname,$request->amount,$request->msisdn)->afterResponse();
+
             return response()->json(
                [
             "reference"  => $request->reference,
