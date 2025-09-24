@@ -3,7 +3,7 @@
 use App\Http\Controllers\Api\v1\SelcomPaymentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\SelecomWebhookController;
-
+use App\Http\Controllers\Api\v1\SMSNotifationController;
 
 // Fallback route
 Route::fallback(function () {
@@ -23,3 +23,6 @@ Route::prefix('v1/payment')->group(function () {
     Route::post('/checkout/orderstatus', [SelcomPaymentController::class, 'Orderstatus']);
 });
 
+Route::prefix('v1/sms')->group(function () {
+  Route::post('/sendnotification',[SMSNotifationController::class, 'sendNotication']);
+});
