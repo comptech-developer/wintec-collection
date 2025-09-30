@@ -13,6 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+
 class SendMonthlySMSNotification implements ShouldQueue
 {
     use Queueable,Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -33,17 +34,18 @@ class SendMonthlySMSNotification implements ShouldQueue
     public function handle(): void
     {
         //
-        try {
-            Log::info('-----Monthly SMS Job start--------');
-           $smsService = new SMSService();
-           $watumishi = DB::table('student')->get();
-           foreach ($watumishi as $key => $value) {
-            $smsService->sendSMS($value->contact,$this->smsTemplate($value->sname));
-           }
-        } catch (\Throwable $th) {
-            report($th);
-            Log::error($th->getMessage());
+       Log::info('----- Monthly SMS Dispatcher started --------');
+
+        $students = DB::table('student')
+                    ->where('id', '>', 247)
+                     ->get();
+        foreach ($students as $student) {
+            SendSingleSMSNotification::dispatch(
+                $student->contact,
+                $this->smsTemplate($student->sname)
+            );
         }
+        Log::info("Dispatched " . $students->count() . " SMS jobs.");
     }
 
     private function  smsTemplate($name)
