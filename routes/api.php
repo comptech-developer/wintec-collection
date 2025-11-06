@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\ContributionReportController;
 use App\Http\Controllers\Api\v1\SelcomPaymentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\SelecomWebhookController;
@@ -25,4 +26,8 @@ Route::prefix('v1/payment')->group(function () {
 
 Route::prefix('v1/sms')->group(function () {
   Route::post('/sendnotification',[SMSNotifationController::class, 'sendNotication']);
+});
+
+Route::prefix('v1/report')->group(function(){
+Route::post('/reports/pdf', [ContributionReportController::class, 'generatePdfPost']);
 });
