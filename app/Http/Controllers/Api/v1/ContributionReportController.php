@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 
 class ContributionReportController extends Controller
@@ -28,7 +29,7 @@ class ContributionReportController extends Controller
         $data = [
             'title' => 'BIKIRA MARIA WA LURD KIDIMU',
             'date_on' => now()->format('F d, Y'),
-            'Station' => $validated['branch'] ?? null,
+            'station' => DB::table('branch')->where('id',$validated['branch'])->first()->branch ?? null,
             'date' => $validated['date'] ?? null,
             'items' => $this->getReportData($validated),
             'digitals' => $this->digitalPayment($validated['date'],$validated['branch']),
@@ -37,6 +38,7 @@ class ContributionReportController extends Controller
             'totalP' => 0,
             'totalD' => 0
         ];
+        Log::info('branch' .$validated['branch']);
         
         // Calculate total
         $data['totalP'] = collect($data['physicals'])->sum('paid');

@@ -65,7 +65,7 @@
         <p><b>Report ya zaka kamili</b></p>
         <p>Generated on: {{ $date_on }}</p>
         @if(isset($station) && isset($date))
-        <p>Period: {{ $station }} to {{ $date }}</p>
+        <p>Station: {{ $station }} ,Mwezi {{ $date }}</p>
         @endif
     </div>
       @php
