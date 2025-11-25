@@ -64,9 +64,18 @@
         <h1>{{ $title }}</h1>
         <p><b>Report ya zaka kamili</b></p>
         <p>Generated on: {{ $date_on }}</p>
-        @if(isset($station) && isset($date))
-        <p>Station: {{ $station }} ,Mwezi {{ $date }}</p>
+        <p>
+        @if(isset($station))
+        Station: {{ $station }} ,
         @endif
+         @if(isset($jumuiya))
+        Jumuiya: {{ $jumuiya }},
+        @endif
+        @if(isset($date))
+        Mwezi: {{ $date }}
+        @endif
+
+        </p>
     </div>
       @php
           $i =1;

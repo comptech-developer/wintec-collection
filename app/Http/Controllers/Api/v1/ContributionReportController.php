@@ -20,6 +20,7 @@ class ContributionReportController extends Controller
             'title' => 'nullable|string|max:255',
             'branch' => 'nullable|string',
             'date' => 'nullable|date',
+            'jumuiya'=>'nullable|string'
         ]);
         
         // Setup temp directory
@@ -30,10 +31,11 @@ class ContributionReportController extends Controller
             'title' => 'BIKIRA MARIA WA LURD KIDIMU',
             'date_on' => now()->format('F d, Y'),
             'station' => DB::table('branch')->where('id',$validated['branch'])->first()->branch ?? null,
+            'jumuiya' => DB::table('jumuiya')->where('id',$validated['jumuiya'])->first()->jumuiya ?? null,
             'date' => $validated['date'] ?? null,
             'items' => $this->getReportData($validated),
-            'digitals' => $this->digitalPayment($validated['date'],$validated['branch']),
-            'physicals' => $this->physicalPayment($validated['date'],$validated['branch']),
+            'digitals' => $this->digitalPayment($validated['date'],$validated['branch'],$validated['jumuiya']),
+            'physicals' => $this->physicalPayment($validated['date'],$validated['branch'],$validated['jumuiya']),
             'total' => 0,
             'totalP' => 0,
             'totalD' => 0
@@ -74,7 +76,7 @@ class ContributionReportController extends Controller
         ];
     }
 
-    private function digitalPayment($doj=null,$branch=null)
+    private function digitalPayment($doj=null,$branch=null,$jumuiya=null)
     {
       
         // ==========================
@@ -89,6 +91,11 @@ class ContributionReportController extends Controller
             $digitalQuery->where('s.branch_id', $branch);
         }
 
+         // Optional jumuiya filter
+        if (!empty($jumuiya)) {
+            $digitalQuery->where('s.jumuiya_id', $jumuiya);
+        }
+
         // Optional month filter
         if (!empty($doj)) {
             $digitalQuery->whereRaw("DATE_FORMAT(p.created_at, '%Y-%m') = ?", [$doj]);
@@ -101,7 +108,7 @@ class ContributionReportController extends Controller
 
     }
 
-    private function physicalPayment($doj=null,$branch=null)
+    private function physicalPayment($doj=null,$branch=null,$jumuiya=null)
     {
          
       
@@ -116,6 +123,12 @@ class ContributionReportController extends Controller
     if (!empty($branch)) {
         $feesQuery->where('jumuiya.branch_id', $branch);
     }
+
+     // Optional jumuiya filter
+        if (!empty($jumuiya)) {
+            $digitalQuery->where('s.jumuiya_id', $jumuiya);
+        }
+
     // Optional month filter
     if (!empty($doj)) {
         $feesQuery->whereRaw("DATE_FORMAT(f.submitdate, '%Y-%m') = ?", [$doj]);
