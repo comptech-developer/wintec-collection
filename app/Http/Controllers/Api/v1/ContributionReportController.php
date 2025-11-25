@@ -121,7 +121,7 @@ class ContributionReportController extends Controller
 
     // Optional branch filter
     if (!empty($branch)) {
-        $feesQuery->where('jumuiya.branch_id', $branch);
+        $feesQuery->where('s.branch_id', $branch);
     }
 
      // Optional jumuiya filter
