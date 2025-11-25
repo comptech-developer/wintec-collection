@@ -116,8 +116,8 @@ class ContributionReportController extends Controller
     // FEES TRANSACTION QUERY
     // ==========================
     $feesQuery = DB::table('fees_transaction as f')
-        ->join('student', 'student.refno', '=', 'f.refno')
-        ->join('jumuiya', 'jumuiya.id', '=', 'student.jumuiya_id');
+        ->join('student as s', 'student.refno', '=', 'f.refno');
+        //->join('jumuiya', 'jumuiya.id', '=', 'student.jumuiya_id');
 
     // Optional branch filter
     if (!empty($branch)) {
