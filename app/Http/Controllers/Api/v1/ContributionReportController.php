@@ -126,7 +126,7 @@ class ContributionReportController extends Controller
 
      // Optional jumuiya filter
         if (!empty($jumuiya)) {
-            $digitalQuery->where('s.jumuiya_id', $jumuiya);
+            $feesQuery->where('s.jumuiya_id', $jumuiya);
         }
 
     // Optional month filter
